@@ -1,2 +1,7 @@
 django
 django-rest-framework
+whisper
+openai
+yt_dlp
+tiktoken
+torch

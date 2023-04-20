@@ -1,39 +1,47 @@
 from django.shortcuts import render
 from django.http import JsonResponse
+from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from .serializers import VideoSerializer
 from .models import Video
+from . import transcript
 
-@api_view(['GET'])
-def getVideos(request):
-  videos = Video.objects.all()
-  serializer = VideoSerializer(videos, many=True)
-  return Response(serializer.data)
+@api_view(['GET', 'POST'])
+def videos_list(request):
+  if request.method == 'GET':
+    videos = Video.objects.all()
+    serializer = VideoSerializer(videos, many=True)
+    return Response(serializer.data)
+  elif request.method == 'POST':
+    transcript.download_video_and_convert_to_mp3(request.data['url'])
+    request.data['transcript'] = transcript.create_transcript()
+    transcript.delete_mp3()
+    request.data['summary'] = transcript.create_summary(request.data['transcript'])
+    serializer = VideoSerializer(data=request.data)
+    if serializer.is_valid():
+      serializer.save()
+    return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-def getVideo(request, pk):
-  videos = Video.objects.get(id=pk)
-  serializer = VideoSerializer(videos, many=False)
-  return Response(serializer.data)
+@api_view(['GET', 'PUT', 'DELETE'])
+def video_detail(request, pk):
+    try:
+        video = Video.objects.get(id=pk)
+    except Video.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
-@api_view(['POST'])
-def createVideo(request):
-  serializer = VideoSerializer(data=request.data)
-  if serializer.is_valid():
-    serializer.save()
-  return Response(serializer.data)
+    if request.method == 'GET':
+        serializer = VideoSerializer(video, many=False)
+        return Response(serializer.data)
 
-@api_view(['PUT'])
-def updateVideo(request, pk):
-  video = Video.objects.get(id=pk)
-  serializer = VideoSerializer(instance=video, data=request.data)
-  if serializer.is_valid():
-    serializer.save()
-  return Response(serializer.data)
+    elif request.method == 'PUT':
+        serializer = VideoSerializer(video, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['DELETE'])
-def deleteVideo(request, pk):
-  video = Video.objects.get(id=pk)
-  video.delete()
-  return Response('Video Deleted')
+    elif request.method == 'DELETE':
+        video.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

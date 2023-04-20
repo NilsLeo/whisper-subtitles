@@ -17,6 +17,23 @@ def getVideo(request, pk):
   serializer = VideoSerializer(videos, many=False)
   return Response(serializer.data)
 
+@api_view(['POST'])
+def createVideo(request):
+  serializer = VideoSerializer(data=request.data)
+  if serializer.is_valid():
+    serializer.save()
+  return Response(serializer.data)
 
-def getRoutes(request):
-  return JsonResponse('Hello', safe=False)
+@api_view(['PUT'])
+def updateVideo(request, pk):
+  video = Video.objects.get(id=pk)
+  serializer = VideoSerializer(instance=video, data=request.data)
+  if serializer.is_valid():
+    serializer.save()
+  return Response(serializer.data)
+
+@api_view(['DELETE'])
+def deleteVideo(request, pk):
+  video = Video.objects.get(id=pk)
+  video.delete()
+  return Response('Video Deleted')

@@ -3,7 +3,7 @@ from django.db import models
 class Video(models.Model):
     title = models.CharField(max_length=200, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
-    url = models.TextField()
+    url = models.CharField(max_length=200, default='https://www.youtube.com/watch?v=9bZkp7q19f0')
     genre = models.TextField(null=True, blank=True)
     noOfRequestedWords = models.IntegerField(null=True, blank=True)
     transcript = models.TextField(null=True, blank=True)
@@ -12,4 +12,4 @@ class Video(models.Model):
     updated = models.DateTimeField(auto_now=True)
     
     def __str__(self):
-        return self.title
+        return self.url

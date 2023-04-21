@@ -5,3 +5,5 @@ openai
 yt_dlp
 tiktoken
 torch
+django-cors-headers
+autopep8

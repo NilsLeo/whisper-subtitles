@@ -270,8 +270,24 @@ const MainLayout = () => {
         </section>
         <section>
           <h2 className="h2">Gallery</h2>
-          <div className="w-full flex">
-            <h3 className="h3 md:w-1/2">{primaryVideo.title}</h3>
+          <div className="w-full block md:flex">
+            <h3 className="h3 md:w-1/2">
+              {primaryVideo.title ? (
+                <Button>
+                  <a
+                    target="_blank"
+                    className="flex space-x-4"
+                    href={primaryVideo.url}
+                  >
+                    <img className="h-5" src={Youtube} alt={Youtube}></img>
+
+                    <div>{primaryVideo.title}</div>
+                  </a>
+                </Button>
+              ) : (
+                ""
+              )}
+            </h3>
             <h3 className="h3 w-full md:w-1/2 flex items-center justify-between">
               <Button
                 onClick={mode === "summary" ? toggleMode : void 0}
@@ -295,7 +311,7 @@ const MainLayout = () => {
           {/* TODO: responsiveness */}
           {/* TODO: find better spot for copy button */}
           <div className="w-full flex flex-col md:flex-row rounded overflow-hidden shadow-lg md:h-[320px] p-4">
-            <div className="relative h-0 md:w-1/2">
+            <div className="hidden md:block relative h-0 md:w-1/2">
               <IFrame url={primaryVideo.url}></IFrame>
             </div>
             <div className="group relative px-6 py-4 md:w-1/2">

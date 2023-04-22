@@ -18,8 +18,8 @@ def videos_list(request):
         request.data['transcript'] = transcript.create_transcript()
         transcript.delete_mp3()
         request.data['summary'] = transcript.create_summary(request.data['transcript'])
-        request.data['description'] = transcript.get_description(request.data['url'])
-        request.data['title'] = transcript.get_title(request.data['url'])
+        # request.data['description'] = transcript.get_description(request.data['url'])
+        # request.data['title'] = transcript.get_title(request.data['url'])
         serializer = VideoSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()

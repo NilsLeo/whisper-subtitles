@@ -28,6 +28,8 @@ const MainLayout = () => {
     transcript: "",
     summary: "",
   });
+  const [videoUrl, setVideoUrl] = useState("");
+
   const [emptyVideo, setEmptyVideo] = useState<VideoData>({
     url: "",
     title: "",
@@ -36,27 +38,44 @@ const MainLayout = () => {
   });
   const [mode, setMode] = useState<"transcript" | "summary">("transcript");
   const contentRef = useRef<HTMLDivElement>(null);
-  const [videoUrl, setVideoUrl] = useState("");
 
   const handleVideoUrlChange = (e) => {
     setVideoUrl(e.target.value);
+    const newVideo = {
+      url: e.target.value,
+      title: "",
+      transcript: "",
+      summary: "",
+    };
+    setEmptyVideo(newVideo);
   };
 
   const postVideoUrl = async () => {
-setPrimaryVideo(emptyVideo)
 setLoading(true)
-  return fetch(`http://localhost:8000/api/videos/`, {
-    method: "post",
-    body: JSON.stringify({ url: videoUrl }),
-  })
-    .then(
-      (response) => console.log(response)
-      
-      )
-    .catch((error) => {
-      console.error(error);
-      throw Error(error);
-    });
+const data = JSON.stringify({ url: videoUrl });
+    const newVideo = {
+      url: videoUrl,
+      title: "",
+      transcript: "",
+      summary: "",
+    };
+    
+    setPrimaryVideo(newVideo);
+    console.log("primary video", newVideo);
+return fetch(`http://localhost:8000/api/videos/`, {
+  method: "POST",
+  headers: {
+    Accept: "application/json",
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify(newVideo),
+})
+  .then((response) => response.json())
+  .then((data) => setPrimaryVideo(data))
+  .catch((error) => {
+    console.error(error);
+    throw Error(error);
+  });
 };
 
   const handleVideoClick = (video: VideoData) => {
@@ -64,7 +83,6 @@ setLoading(true)
     console.log(video);
     setPrimaryVideo(video);
   };
-
   const loadVideos = async () => {
     try {
       const videoData = await ApiService.httpGet("/videos");

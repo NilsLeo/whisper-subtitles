@@ -38,25 +38,14 @@ def create_summary(transcript):
     messages.append({"role": "assistant", "content": reply})
     return reply
 
-# def num_tokens_from_string(string: str, encoding_name: str) -> int:
-#     """Returns the number of tokens in a text string."""
-#     encoding = tiktoken.get_encoding(encoding_name)
-#     num_tokens = len(encoding.encode(string))
-#     return num_tokens
 
-# def split_transcript_into_array_by_no_of_tokens(transcript, max_tokens_per_chunk):
-#     transcript_tokens = transcript.split(" ")
-#     chunks = []
-#     chunk = ""
-#     chunk_token_count = 0
-#     for token in transcript_tokens:
-#         if chunk_token_count + len(token) + 1 <= max_tokens_per_chunk:
-#             chunk += token + " "
-#             chunk_token_count += len(token) + 1
-#         else:
-#             chunks.append(chunk.strip())
-#             chunk = token + " "
-#             chunk_token_count = len(token) + 1
-#     if chunk:
-#         chunks.append(chunk.strip())
-#     return chunks
+def get_description(url):
+    with YoutubeDL() as ydl:
+        info_dict = ydl.extract_info(url, download=False)
+        return info_dict.get('description', '')
+
+
+def get_title(url):
+    with YoutubeDL() as ydl:
+        info_dict = ydl.extract_info(url, download=False)
+        return info_dict.get('title', '')

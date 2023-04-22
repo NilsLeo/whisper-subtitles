@@ -1,3 +1,53 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.btn {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: center;
+  text-transform: uppercase;
+  border-radius: 0.25rem;
+  transition: all 0.3s ease-in-out;
+}
+.btn-primary {
+  background-color: #4b5563;
+  color: #fff;
+}
+.btn-secondary {
+  background-color: #e2e8f0;
+  color: #4a5568;
+}
+
+/* Custom headings classes */
+.h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.1rem;
+  margin-bottom: 1rem;
+}
+.h2 {
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.1rem;
+  margin-bottom: 1rem;
+}
+.h3 {
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.1rem;
+  margin-bottom: 1rem;
+}
+
+/* Custom body classes */
+.body {
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #4a5568;
+  margin-bottom: 1rem;
+}

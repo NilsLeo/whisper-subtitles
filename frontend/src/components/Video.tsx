@@ -1,27 +1,33 @@
 import React from 'react';
+import IFrame from './IFrame';
 
 type Props = {
-  video: any
+  video: any;
+  onClick: () => void;
+};
+const Video = ({ video, onClick }: Props) => {
+
+function getYouTubeID(url: string): string | undefined {
+  if (!url) {
+    return undefined;
+  }
+  const regEx =
+    /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/ as RegExp;
+  const match: RegExpMatchArray | null = url.match(regEx);
+  return match?.[1];
 }
 
-const Video = ({ video }: Props) => {
-  const videoId = video.url.replace('https://www.youtube.com/watch?v=', '').substring(0, 11);
+  const videoId = getYouTubeID(video.url);
 
   return (
-    <div className="max-w-sm rounded overflow-hidden shadow-lg transition-all cursor-pointer scale-95 hover:scale-100 duration-150">
-      <div className="relative h-0" style={{ paddingBottom: "56.25%" }}>
-        <iframe
-          className="absolute top-0 left-0 w-full h-full"
-          src={`https://www.youtube.com/embed/${videoId}`}
-          title="YouTube video player"
-          frameBorder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          allowFullScreen
-        ></iframe>
-      </div>
+    <div
+      className="max-w-sm rounded overflow-hidden shadow-lg transition-all cursor-pointer scale-95 hover:scale-100 duration-150"
+      onClick={onClick}
+    >
+      <IFrame url={video.url}></IFrame>
       <div className="px-6 py-4">
         <div className="font-bold text-xl mb-2">{video.title}</div>
-        <p className="text-gray-700 text-base">{video.summary}</p>
+        {/* <p className="text-gray-700 text-base">{video.summary}</p> */}
       </div>
     </div>
   );

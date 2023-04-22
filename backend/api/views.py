@@ -9,19 +9,21 @@ from . import transcript
 
 @api_view(['GET', 'POST'])
 def videos_list(request):
-  if request.method == 'GET':
-    videos = Video.objects.all()
-    serializer = VideoSerializer(videos, many=True)
-    return Response(serializer.data)
-  elif request.method == 'POST':
-    transcript.download_video_and_convert_to_mp3(request.data['url'])
-    request.data['transcript'] = transcript.create_transcript()
-    transcript.delete_mp3()
-    request.data['summary'] = transcript.create_summary(request.data['transcript'])
-    serializer = VideoSerializer(data=request.data)
+    if request.method == 'GET':
+        videos = Video.objects.all().order_by('-updated')
+        serializer = VideoSerializer(videos, many=True)
+        return Response(serializer.data)
+    elif request.method == 'POST':
+        transcript.download_video_and_convert_to_mp3(request.data['url'])
+        request.data['transcript'] = transcript.create_transcript()
+        transcript.delete_mp3()
+        request.data['summary'] = transcript.create_summary(request.data['transcript'])
+        request.data['description'] = transcript.get_description(request.data['url'])
+        request.data['title'] = transcript.get_title(request.data['url'])
+        serializer = VideoSerializer(data=request.data)
     if serializer.is_valid():
-      serializer.save()
-    return Response(serializer.data, status=status.HTTP_201_CREATED)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 @api_view(['GET', 'PUT', 'DELETE'])

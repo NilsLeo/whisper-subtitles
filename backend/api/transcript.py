@@ -29,6 +29,7 @@ def create_transcript():
 def create_summary(transcript):
     messages = []
     message = "'The following is a transcript of an informative youtube Video. Turn it into a guide/ documentation of all the important information that i can reference in the future. The documentation should have roughly 10% as many words as the input. For example if the transcript is 300 words long, i want it summarized in about 30 words. In addition, i want you to use bullet points, headings, and anything else which improves the structure, conciseness and readability of the documentation.The Result should be written in the same language detected in the transcript.The Result should be outputted in a markdown: \n \n `'" + transcript + "`"
+    # TODO: revise prompt
     print(message)
     messages.append({"role": "user", "content": message})
     response = openai.ChatCompletion.create(

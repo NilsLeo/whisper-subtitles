@@ -9,8 +9,11 @@ import IFrame from "./IFrame";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
+import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import { faChevronUp } from "@fortawesome/free-solid-svg-icons";
 import { faClipboard } from "@fortawesome/free-solid-svg-icons";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
+import Button from "./Button";
 interface VideoData {
   url: string;
   title: string;
@@ -22,6 +25,16 @@ const MainLayout = () => {
   const [videos, setVideos] = useState<VideoData[]>([]);
   const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [summaryOptionsOpen, setSummaryOptionsOpen] = useState(false);
+  const [sliderValue, setSliderValue] = useState(100);
+  const categories = [
+    "Entertainment",
+    "Education",
+    "Vlogs",
+    "Product Reviews",
+    "News/Current Events",
+  ];
+
   const [primaryVideo, setPrimaryVideo] = useState<VideoData>({
     url: "",
     title: "",
@@ -39,6 +52,13 @@ const MainLayout = () => {
   const [mode, setMode] = useState<"transcript" | "summary">("transcript");
   const contentRef = useRef<HTMLDivElement>(null);
 
+  function handleClick() {
+    setSummaryOptionsOpen(!summaryOptionsOpen);
+  }
+
+  function handleSliderChange(event) {
+    setSliderValue(event.target.value);
+  }
   const handleVideoUrlChange = (e) => {
     setVideoUrl(e.target.value);
     const newVideo = {
@@ -51,32 +71,35 @@ const MainLayout = () => {
   };
 
   const postVideoUrl = async () => {
-setLoading(true)
-const data = JSON.stringify({ url: videoUrl });
+    // TODO: no scrollbar
+    // TODO: add filters
+    // TODO: responsiveness
+    setLoading(true);
+    const data = JSON.stringify({ url: videoUrl });
     const newVideo = {
       url: videoUrl,
       title: "",
       transcript: "",
       summary: "",
     };
-    
+
     setPrimaryVideo(newVideo);
     console.log("primary video", newVideo);
-return fetch(`http://localhost:8000/api/videos/`, {
-  method: "POST",
-  headers: {
-    Accept: "application/json",
-    "Content-Type": "application/json",
-  },
-  body: JSON.stringify(newVideo),
-})
-  .then((response) => response.json())
-  .then((data) => setPrimaryVideo(data))
-  .catch((error) => {
-    console.error(error);
-    throw Error(error);
-  });
-};
+    return fetch(`http://localhost:8000/api/videos/`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newVideo),
+    })
+      .then((response) => response.json())
+      .then((data) => setPrimaryVideo(data))
+      .catch((error) => {
+        console.error(error);
+        throw Error(error);
+      });
+  };
 
   const handleVideoClick = (video: VideoData) => {
     // Output video to the console when clicked
@@ -120,19 +143,24 @@ return fetch(`http://localhost:8000/api/videos/`, {
     setCopied(true);
   };
 
+  const emulateInputClick = () => {
+    const inputElement = document.getElementById("youtube-link");
+    inputElement.click();
+  };
+  // TODO: error handling if chatgpt returns error
   return (
     <>
       <div className="space-y-6">
         <section>
           <div className="py-8 px-4 max-w-screen-xl lg:py-16 lg:px-6">
-            <div className="max-w-screen-lg text-gray-500 sm:text-lg flex flex-col space-y-6">
+            <div className="max-w-screen-lgsm:text-lg flex flex-col space-y-6">
               <h2 className="h1">YT-TRANSCRIBER</h2>
               <div className="flex items-center justify-center space-x-4">
-                <img className="w-8" src={Youtube}></img>
-                <img className="w-4" src={BlackCircle}></img>
-                <img className="w-8" src={Openai}></img>
-                <img className="w-4" src={BlackCircle}></img>
-                <img className="w-8" src={Clipboard}></img>
+                <img className="w-8" src={Youtube} alt={Youtube}></img>
+                <img className="w-4" src={BlackCircle} alt={BlackCircle}></img>
+                <img className="w-8" src={Openai} alt={Openai}></img>
+                <img className="w-4" src={BlackCircle} alt={BlackCircle}></img>
+                <img className="w-8" src={Clipboard} alt={Clipboard}></img>
               </div>
               <div>
                 This Tool Transcribes and Summarizes Videos using OpenAi's
@@ -140,27 +168,101 @@ return fetch(`http://localhost:8000/api/videos/`, {
               </div>
               <div className="flex items-center justify-center"></div>
               <div className="flex items-center justify-between">
-                <div className="w-full">
+                <div className="w-full space-y-4">
                   <div>
                     <label
                       htmlFor="youtube-link"
-                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                      className="block mb-2 text-sm font-medium"
                     >
-                      First name
+                      Youtube Link
                     </label>
                     <input
                       id="youtube-link"
                       type="text"
-                      className="border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
+                      className="border border-gray-300 text-black text-sm rounded-lg block w-full p-2.5"
                       placeholder="e.g. https://youtu.be/dQw4w9WgXcQ"
                       required
                       value={videoUrl}
                       onChange={handleVideoUrlChange}
                     ></input>
                   </div>
-                  <button disabled={videoUrl===''} className="btn-primary" onClick={postVideoUrl}>
-                    Transcribe!
-                  </button>
+                  <div className="">
+                    <div className="flex space-x-4 items-center justify-center">
+                      <Button onClick={handleClick}>
+                        {" "}
+                        <div className="flex items-center justify-center space-x-4">
+                          <div>Summary Options</div>
+
+                          <FontAwesomeIcon
+                            icon={
+                              summaryOptionsOpen ? faChevronUp : faChevronDown
+                            }
+                          />
+                        </div>
+                      </Button>
+                      <Button
+                        disabled={videoUrl === ""}
+                        onClick={
+                          videoUrl === "" ? emulateInputClick : postVideoUrl
+                        }
+                      >
+                        Go!
+                      </Button>
+                    </div>
+                    {summaryOptionsOpen ? (
+                      <div className="w-full flex flex-col md:flex-row space-y-4 p-4 items-center justify-evenly transition-all duration-200 border-2 border-gray-200 hover:bg-gray-200 rounded-md mt-4 py-4">
+                        <div>
+                          {/* TODO: Animations */}
+                          <label htmlFor="range-slider">
+                            Number Of Words: {sliderValue}
+                          </label>
+                          <input
+                            type="range"
+                            name="range-slider"
+                            id="range-slider"
+                            className="w-full"
+                            min="100"
+                            max="500"
+                            step="100"
+                            value={sliderValue}
+                            onChange={handleSliderChange}
+                          />
+                        </div>
+
+                        <div className="flex flex-col">
+                          <label
+                            className="flex space-x-4 items-center"
+                            htmlFor="select"
+                          >
+                            <div>
+                              {" "}
+                              <input
+                                type="checkbox"
+                                id="my-checkbox"
+                                name="interest1"
+                                value="reading"
+                              ></input>
+                            </div>
+                            <div>Video Type</div>
+                          </label>
+                          <select title="select">
+                            {categories.map((category) => (
+                              <option
+                                key={category}
+                                value={category
+                                  .toLowerCase()
+                                  .replace(/\s+/g, "-")}
+                              >
+                                {category}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+                    ) : (
+                      ""
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -168,58 +270,52 @@ return fetch(`http://localhost:8000/api/videos/`, {
         </section>
         <section>
           <h2 className="h2">Gallery</h2>
-          <div className="w-full flex ">
-            <h3 className="h3 w-1/2">{primaryVideo.title}</h3>
-            <h3 className="h3 w-1/2 flex items-center justify-between">
-              <FontAwesomeIcon
-                className={
-                  mode === "transcript"
-                    ? "text-gray-500 text-opacity-25"
-                    : "text-black cursor-pointer"
-                }
+          <div className="w-full flex">
+            <h3 className="h3 md:w-1/2">{primaryVideo.title}</h3>
+            <h3 className="h3 w-full md:w-1/2 flex items-center justify-between">
+              <Button
                 onClick={mode === "summary" ? toggleMode : void 0}
-                icon={faChevronLeft}
-              />
+                disabled={mode === "transcript" ? true : false}
+              >
+                <FontAwesomeIcon icon={faChevronLeft} />
+              </Button>
+
               <div className="flex-grow text-center">
                 <span>{mode === "transcript" ? "Transcript" : "Summary"}</span>
               </div>
-              <FontAwesomeIcon
-                className={
-                  mode === "summary"
-                    ? "text-gray-500 text-opacity-25"
-                    : "text-black cursor-pointer"
-                }
+              <Button
                 onClick={mode === "transcript" ? toggleMode : void 0}
-                icon={faChevronRight}
-              />
+                disabled={mode === "summary" ? true : false}
+              >
+                <FontAwesomeIcon icon={faChevronRight} />
+              </Button>
             </h3>
           </div>
-          <div className="w-full flex rounded overflow-hidden shadow-lg h-[400px] p-4">
-            <div className="relative h-0 w-1/2">
+          {/* TODO: loading animation */}
+          {/* TODO: responsiveness */}
+          {/* TODO: find better spot for copy button */}
+          <div className="w-full flex flex-col md:flex-row rounded overflow-hidden shadow-lg md:h-[320px] p-4">
+            <div className="relative h-0 md:w-1/2">
               <IFrame url={primaryVideo.url}></IFrame>
             </div>
-            <div className="relative px-6 py-4 w-1/2">
+            <div className="group relative px-6 py-4 md:w-1/2">
               <div>
-                {/* `h3 flex items-center justify-between `  */}
-
-                <div className="flex items-end justify-end"></div>
-                <button
-                  className="flex items-center justify-end space-x-2 rounded-full border-gray-500 border-opacity-30 text-gray-500 border-2 py-1 px-2"
-                  onClick={copyToClipboard}
-                >
-                  <span>{copied ? "Copied!" : "Copy"}</span>
-                  <FontAwesomeIcon icon={copied ? faCheck : faClipboard} />
-                </button>
-                <p
-                  id="content"
-                  className="body max-h-[350px] hide-scrollbar overflow-y-scroll py-3"
-                  ref={contentRef}
-                >
-                  <p></p>
-                  {mode === "transcript"
-                    ? primaryVideo.transcript
-                    : primaryVideo.summary}
-                </p>
+                {/*h3 flex items-center justify-between*/}
+                <div className="absolute right-0 hidden group-hover:flex transition-all duration-150">
+                  <Button onClick={copyToClipboard}>
+                    <div className="flex space-x-2 items-center">
+                      <div>{copied ? "Copied!" : "Copy"}</div>
+                      <FontAwesomeIcon icon={copied ? faCheck : faClipboard} />
+                    </div>
+                  </Button>
+                </div>
+                <div className="body max-h-[290px] hide-scrollbar overflow-y-scroll no-scrollbar">
+                  <p id="content" className="py-4" ref={contentRef}>
+                    {mode === "transcript"
+                      ? primaryVideo.transcript
+                      : primaryVideo.summary}
+                  </p>
+                </div>
               </div>
             </div>
           </div>

@@ -5,7 +5,7 @@ const config = {
   },
 };
 
-const httpGet = (endpoint) => {
+const httpGet = (endpoint: string) => {
   return fetch(`${config.api}${endpoint}`, {
     ...config.options,
   })
@@ -17,7 +17,7 @@ const httpGet = (endpoint) => {
     });
 };
 
-const httpPost = (endpoint, data) => {
+const httpPost = (endpoint:string, data: any) => {
     console.log('data', data)
 
   return fetch(`${config.api}${endpoint}`, {
@@ -33,7 +33,7 @@ const httpPost = (endpoint, data) => {
     });
 };
 
-const httpPut = (endpoint, data) => {
+const httpPut = (endpoint: string, data: any) => {
   return fetch(`${config.api}${endpoint}`, {
     method: "put",
     body: data ? JSON.stringify(data) : null,
@@ -47,7 +47,7 @@ const httpPut = (endpoint, data) => {
     });
 };
 
-const httpDelete = (endpoint, data) => {
+const httpDelete = (endpoint: string, data: any) => {
   return fetch(`${config.api}${endpoint}`, {
     method: "delete",
     ...config.options,
@@ -60,7 +60,7 @@ const httpDelete = (endpoint, data) => {
     });
 };
 
-const handleResponse = (response) => {
+const handleResponse = (response: any) => {
   // You can handle 400 errors as well.
   if (response.status === 200) {
     return response.json();

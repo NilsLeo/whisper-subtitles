@@ -18,7 +18,6 @@ def videos_list(request):
         request.data['transcript'] = transcript.create_transcript()
         transcript.delete_mp3()
         # Get transcript without timestamps
-        request.data['summary'] = transcript.create_summary(request.data['transcript'])
         # TODO: description and title
         # request.data['description'] = transcript.get_description(request.data['url'])
         # request.data['title'] = transcript.get_title(request.data['url'])

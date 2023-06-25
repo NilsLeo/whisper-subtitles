@@ -11,12 +11,13 @@ def download_video_and_convert_to_mp3(url):
         'postprocessors': [{
             'key': 'FFmpegExtractAudio',
             'preferredcodec': 'mp3',
-            'preferredquality': '192',
+            'preferredquality': '32',
         }],
         'outtmpl': r'output.%(ext)s'
     }
     with YoutubeDL(ydl_opts) as ydl:
         ydl.download(URLS)
+
 
 def delete_mp3():
     if os.path.exists("output.mp3"):

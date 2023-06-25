@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import BlackCircle from "../assets/images/black-circle.png";
 import Clipboard from "../assets/images/clipboard.png";
 import Openai from "../assets/images/openai.png";
@@ -14,20 +14,7 @@ interface VideoData {
 const MainLayout = () => {
 
   const [summaryOptionsOpen, setSummaryOptionsOpen] = useState(false);
-  const categories = [
-    "Entertainment",
-    "Education",
-    "Vlogs",
-    "Product Reviews",
-    "News/Current Events",
-  ];
 
-  const [primaryVideo, setPrimaryVideo] = useState<VideoData>({
-    url: "",
-    title: "",
-    transcript: "",
-    summary: "",
-  });
   const [videoUrl, setVideoUrl] = useState("");
 
   const [emptyVideo, setEmptyVideo] = useState<VideoData>({

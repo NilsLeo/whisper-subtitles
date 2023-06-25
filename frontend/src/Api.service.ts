@@ -47,7 +47,7 @@ const httpPut = (endpoint: string, data: any) => {
     });
 };
 
-const httpDelete = (endpoint: string, data: any) => {
+const httpDelete = (endpoint: string) => {
   return fetch(`${config.api}${endpoint}`, {
     method: "delete",
     ...config.options,

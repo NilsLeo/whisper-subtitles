@@ -23,17 +23,10 @@ const MainLayout = () => {
     transcript: "",
     summary: "",
   });
-  const [mode, setMode] = useState<"transcript" | "summary">("transcript");
-  const contentRef = useRef<HTMLDivElement>(null);
 
-  function handleClick() {
-    setSummaryOptionsOpen(!summaryOptionsOpen);
-  }
 
-  function handleSliderChange(event) {
-    setSliderValue(event.target.value);
-  }
-  const handleVideoUrlChange = (e) => {
+
+  const handleVideoUrlChange = (e: any) => {
     setVideoUrl(e.target.value);
     const newVideo = {
       url: e.target.value,
@@ -48,7 +41,7 @@ const MainLayout = () => {
     // TODO: no scrollbar
     // TODO: add filters
     // TODO: responsiveness
-    setLoading(true);
+
     const data = JSON.stringify({ url: videoUrl });
     const newVideo = {
       url: videoUrl,
@@ -57,7 +50,7 @@ const MainLayout = () => {
       summary: "",
     };
 
-    setPrimaryVideo(newVideo);
+
     console.log("primary video", newVideo);
     return fetch(`http://localhost:8000/api/videos/`, {
       method: "POST",
